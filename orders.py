@@ -1,5 +1,10 @@
+from settings import deposit
+
+
 # создание ордера
-async def market_order(session, symbol, qty, side):
+async def market_order(session, symbol, side, close_price):
+    qty_p, limit_p = getPrecision(symbol, session)
+    qty = round(deposit / close_price[-1], qty_p)
     market_order = session.place_order(
         category="linear",
         symbol=symbol,
@@ -29,7 +34,7 @@ def getPrecision(symbol, session):
         tickSize = str(float(tickSize))
 
     if qtyStep.startswith("0."):
-        qtyStep = qtyStep.replace("0.")
+        qtyStep = qtyStep.replace("0.", "")
     else:
         qtyStep = str(float(qtyStep))
 

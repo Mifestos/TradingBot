@@ -19,6 +19,7 @@ session = HTTP(
 
 
 async def run():  # асинхронная функция
+    last_signal = None
     while True:  # бесконечный цикл в котором будем запрашивать свечи для анализа
         close_price = []
 
@@ -44,12 +45,14 @@ async def run():  # асинхронная функция
         rsi_value = talib.RSI(close_price, timeperiod=rsi_len)[-1]
         print(f"RSI: {round(rsi_value, 2)}")
 
-        if rsi_value < rsi_low:
+        if rsi_value < rsi_low and last_signal != "Buy":
             """BUY"""
-            qty_p, limit_p = getPrecision(symbol, session)
-            await market_order(session, symbol, 0, "Buy")
-        elif rsi_value > rsi_high:
+            await market_order(session, symbol, "Buy", close_price)
+            last_signal = "Buy"
+        elif rsi_value > rsi_high and last_signal != "Sell":
             """SELL"""
+            await market_order(session, symbol, "Sell", close_price)
+            last_signal = "Sell"
 
         await asyncio.sleep(60)
 
