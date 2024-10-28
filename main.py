@@ -12,7 +12,8 @@ load_dotenv(find_dotenv())  # поиск .env с ключами
 
 # создание сессии
 session = HTTP(
-    testnet=True,
+    demo=True,
+    #testnet=True,
     api_key=os.getenv('API_KEY'),
     api_secret=os.getenv('SECRET_KEY')
 )
